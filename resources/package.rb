@@ -1,4 +1,4 @@
-
+#
 # Cookbook Name:: osx_installer
 # Resource:: package
 #
