@@ -21,10 +21,11 @@ action :install do
   installer_command << " -verbose" if new_resource.verbose
   execute "install-#{new_resource.filename}" do 
     command installer_command
+    action :nothing
   end
 
   if new_resource.is_remote
-    remote_file "#{Chef::Config[:file_cache_path]}/#{new_resource.filename}" do
+    remote_file package_path() do
       Chef::Log.debug("#{self.class.name} fetching:  #{new_resource.source}")
       source new_resource.source
       notifies :run, "install-#{new_resource.filename}", :immediately
@@ -38,7 +39,7 @@ def add_cache_path_to_search_paths!
   end
 end
 
-get package_path
+def package_path
   if new_resource.is_remote
     File.join(Chef::Config[:file_cache_path], new_resource.filename)
   else
