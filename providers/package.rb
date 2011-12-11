@@ -10,13 +10,7 @@ def load_current_resource
 end
 
 action :install do
-  if new_resource.is_remote
-    add_cache_path_to_search_paths!
-    remote_file "#{Chef::Config[:file_cache_path]}/#{new_resource.filename}" do
-      Chef::Log.debug("#{self.class.name} fetching:  #{new_resource.source}")
-      source new_resource.source
-    end
-  end
+  add_cache_path_to_search_paths!
 
   Chef::Log.debug("#{self.class.name} search_paths: #{new_resource.search_paths.inspect}")
 
@@ -39,7 +33,17 @@ action :install do
 
     installer_command = "installer -pkg '#{package_path}' -target '#{new_resource.destination}'"
     installer_command << " -verbose" if new_resource.verbose
-    execute installer_command
+    execute "install-#{new_resource.filename}" do 
+      command installer_command
+    end
+  end
+
+  if new_resource.is_remote
+    remote_file "#{Chef::Config[:file_cache_path]}/#{new_resource.filename}" do
+      Chef::Log.debug("#{self.class.name} fetching:  #{new_resource.source}")
+      source new_resource.source
+      notifies :run, "install-#{new_resource.filename}", :immediately
+    end
   end
 end
 
