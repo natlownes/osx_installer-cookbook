@@ -41,7 +41,7 @@ end
 
 def package_path
   if new_resource.is_remote
-    File.join(Chef::Config[:file_cache_path], new_resource.filename)
+    ::File.join(Chef::Config[:file_cache_path], new_resource.filename)
   else
     new_resource.filename
   end
