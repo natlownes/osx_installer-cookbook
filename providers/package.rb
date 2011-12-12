@@ -28,7 +28,7 @@ action :install do
     remote_file package_path() do
       Chef::Log.debug("#{self.class.name} fetching:  #{new_resource.source}")
       source new_resource.source
-      notifies :run, resources(:remote_file => "install-#{new_resource.filename}"), :immediately
+      notifies :run, resources(:execute => "install-#{new_resource.filename}"), :immediately
     end
   end
 end
